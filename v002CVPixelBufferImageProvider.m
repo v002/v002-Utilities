@@ -259,7 +259,7 @@
             break;
     }
     
-    GLuint bytesPerRow = CVPixelBufferGetBytesPerRow(_buffer);
+    GLuint bytesPerRow = (GLuint)CVPixelBufferGetBytesPerRow(_buffer);
     GLvoid *baseAddress = CVPixelBufferGetBaseAddress(_buffer);
     
     size_t rowBitsPerBlock = bitsPerBlock / blockHeight;
@@ -305,10 +305,10 @@
     // Upload to the nearest whole block so we don't garble edge pixels
     GLint texExtraRight = 0;
     GLint texExtraTop = 0;
-    texExtraRight = ((_width + (blockWidth - 1)) & ~(blockWidth - 1)) - _width;
-    texExtraTop = ((_height + (blockHeight - 1)) & ~(blockHeight - 1)) - _height;
-    if (texExtraRight > extraRight) texExtraRight = extraRight;
-    if (texExtraTop > extraTop) texExtraTop = extraTop;
+    texExtraRight = (GLint)(((_width + (blockWidth - 1)) & ~(blockWidth - 1)) - _width);
+    texExtraTop = (GLint)(((_height + (blockHeight - 1)) & ~(blockHeight - 1)) - _height);
+    if (texExtraRight > extraRight) texExtraRight = (GLint)extraRight;
+    if (texExtraTop > extraTop) texExtraTop = (GLint)extraTop;
     
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _width + texExtraRight, _height, 0, format, type, baseAddress);
         
