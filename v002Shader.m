@@ -238,13 +238,12 @@
                                              error:&loadError];
         }
         
-        if (error != nil)
-        {
-            *error = loadError;
-        }
-        
         if(loadError)
         {
+            if (error != nil)
+            {
+                *error = loadError;
+            }
             [self release];
             return nil;
         }
@@ -252,10 +251,15 @@
 	return self;
 }
 
+- (id)initWithShadersInAppBundle:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error
+{
+    return [self initWithShadersInBundle:[NSBundle mainBundle] withName:theShadersName forContext:context error:error];
+}
+
 - (id) initWithShadersInAppBundle:(NSString *)theShadersName forContext:(CGLContextObj)context;
 {
-	return [self initWithShadersInBundle:[NSBundle mainBundle] withName:theShadersName forContext:context];
-} // initWithShadersInAppBundle
+	return [self initWithShadersInAppBundle:theShadersName forContext:context error:nil];
+}
 
 - (id) initWithShadersInBundle:(NSBundle*)bundle withName:(NSString *)theShadersName forContext:(CGLContextObj) context
 {

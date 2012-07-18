@@ -23,6 +23,7 @@
 } // Shader
 
 - (id)initWithShadersInAppBundle:(NSString *)theShadersName forContext:(CGLContextObj)context;
+- (id)initWithShadersInAppBundle:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error;
 - (id)initWithShadersInBundle:(NSBundle *)bundle withName:(NSString *)theShadersName forContext:(CGLContextObj)context;
 // Designated initializer:
 - (id)initWithShadersInBundle:(NSBundle *)bundle withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error;
