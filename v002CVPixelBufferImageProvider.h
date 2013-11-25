@@ -13,6 +13,7 @@
 @interface V002_UNIQUE_CLASS_NAME(v002CVPixelBufferImageProvider) : NSObject <QCPlugInOutputImageProvider> {
 @private
     CVPixelBufferRef _buffer;
+    CVOpenGLTextureCacheRef _cache;
     uint32_t _fmt;
     BOOL _cmatch;
     BOOL _flipped;
@@ -20,6 +21,7 @@
     NSUInteger _height;
 }
 - (id)initWithPixelBuffer:(CVPixelBufferRef)buffer isFlipped:(BOOL)flipped shouldColorMatch:(BOOL)shouldMatch;
+- (id)initWithPixelBuffer:(CVPixelBufferRef)buffer textureCache:(CVOpenGLTextureCacheRef)cache isFlipped:(BOOL)flipped shouldColorMatch:(BOOL)shouldMatch;
 @end
 
 #if defined(V002_USE_CLASS_ALIAS)
