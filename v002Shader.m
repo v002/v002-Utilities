@@ -17,17 +17,17 @@
 
 - (NSString *)getShaderSourceFromResource:(NSString *)theShaderResourceName
                                 extension:(NSString *)theExtension
-                                 inBundle:(NSBundle *)theBundle
+                              inDirectory:(NSString *)theDirectory
                                     error:(NSError **)error
 {	
-	NSString  *path = [theBundle pathForResource:theShaderResourceName 
-                                          ofType:theExtension];
+    NSString  *path = [[theDirectory stringByAppendingPathComponent:theShaderResourceName] stringByAppendingPathExtension:theExtension];
+
     NSString *source = nil;
     if (path)
     {
         source = [NSString stringWithContentsOfFile:path usedEncoding:nil error:error];
     }
-    else if (error)
+    if (source == nil && error)
     {
         *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:ENOENT userInfo:nil];
     }
@@ -36,21 +36,21 @@
 
 //---------------------------------------------------------------------------------
 
-- (NSString *) getFragmentShaderSourceFromResource:(NSString *)theFragmentShaderResourceName inBundle:(NSBundle *)theBundle error:(NSError **)error
+- (NSString *) getFragmentShaderSourceFromResource:(NSString *)theFragmentShaderResourceName inDirectory:(NSString *)theDirectory error:(NSError **)error
 {
 	return [self getShaderSourceFromResource:theFragmentShaderResourceName 
                                    extension:@"frag"
-                                    inBundle:theBundle
+                                 inDirectory:theDirectory
                                        error:error];
 } // getFragmentShaderSourceFromResource
 
 //---------------------------------------------------------------------------------
 
-- (NSString *) getVertexShaderSourceFromResource:(NSString *)theVertexShaderResourceName inBundle:(NSBundle *)theBundle error:(NSError **)error
+- (NSString *) getVertexShaderSourceFromResource:(NSString *)theVertexShaderResourceName inDirectory:(NSString *)theDirectory error:(NSError **)error
 {
 	return [self getShaderSourceFromResource:theVertexShaderResourceName 
                                    extension:@"vert"
-                                    inBundle:theBundle
+                                 inDirectory:theDirectory
                                        error:error];
 } // getVertexShaderSourceFromResource
 
@@ -216,7 +216,7 @@
 
 //---------------------------------------------------------------------------------
 
-- (id)initWithShadersInBundle:(NSBundle *)bundle withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error
+- (id)initWithShadersInDirectory:(NSString *)directoryPath withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error
 {
     self = [super init];
 	if(self)
@@ -226,10 +226,10 @@
 		NSError *loadError = nil;
 		
 		// Load vertex and fragment shader
-		
-		NSString *vertexShaderSource = [self getVertexShaderSourceFromResource:theShadersName inBundle:bundle error:&loadError];
+
+		NSString *vertexShaderSource = [self getVertexShaderSourceFromResource:theShadersName inDirectory:directoryPath error:&loadError];
         
-        NSString *fragmentShaderSource = [self getFragmentShaderSourceFromResource:theShadersName inBundle:bundle error:&loadError];
+        NSString *fragmentShaderSource = [self getFragmentShaderSourceFromResource:theShadersName inDirectory:directoryPath error:&loadError];
         
         if (vertexShaderSource && fragmentShaderSource)
         {
@@ -249,6 +249,11 @@
         }
 	}
 	return self;
+}
+
+- (id)initWithShadersInBundle:(NSBundle *)bundle withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error
+{
+    return [self initWithShadersInDirectory:[bundle resourcePath] withName:theShadersName forContext:context error:error];
 }
 
 - (id)initWithShadersInAppBundle:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error

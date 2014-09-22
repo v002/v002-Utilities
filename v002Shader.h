@@ -25,9 +25,9 @@
 - (id)initWithShadersInAppBundle:(NSString *)theShadersName forContext:(CGLContextObj)context;
 - (id)initWithShadersInAppBundle:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error;
 - (id)initWithShadersInBundle:(NSBundle *)bundle withName:(NSString *)theShadersName forContext:(CGLContextObj)context;
-// Designated initializer:
 - (id)initWithShadersInBundle:(NSBundle *)bundle withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error;
-
+// Designated initializer:
+- (id)initWithShadersInDirectory:(NSString *)directory withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error;
 - (GLhandleARB) programObject;
 - (GLint) getUniformLocation:(const GLcharARB *)theUniformName;
 
