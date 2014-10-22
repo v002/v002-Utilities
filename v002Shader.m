@@ -15,7 +15,7 @@
 
 //---------------------------------------------------------------------------------
 
-- (NSString *)getShaderSourceFromResource:(NSString *)theShaderResourceName
++ (NSString *)getShaderSourceFromResource:(NSString *)theShaderResourceName
                                 extension:(NSString *)theExtension
                               inDirectory:(NSString *)theDirectory
                                     error:(NSError **)error
@@ -36,7 +36,7 @@
 
 //---------------------------------------------------------------------------------
 
-- (NSString *) getFragmentShaderSourceFromResource:(NSString *)theFragmentShaderResourceName inDirectory:(NSString *)theDirectory error:(NSError **)error
++ (NSString *) getFragmentShaderSourceFromResource:(NSString *)theFragmentShaderResourceName inDirectory:(NSString *)theDirectory error:(NSError **)error
 {
 	return [self getShaderSourceFromResource:theFragmentShaderResourceName 
                                    extension:@"frag"
@@ -46,7 +46,7 @@
 
 //---------------------------------------------------------------------------------
 
-- (NSString *) getVertexShaderSourceFromResource:(NSString *)theVertexShaderResourceName inDirectory:(NSString *)theDirectory error:(NSError **)error
++ (NSString *) getVertexShaderSourceFromResource:(NSString *)theVertexShaderResourceName inDirectory:(NSString *)theDirectory error:(NSError **)error
 {
 	return [self getShaderSourceFromResource:theVertexShaderResourceName 
                                    extension:@"vert"
@@ -216,7 +216,7 @@
 
 //---------------------------------------------------------------------------------
 
-- (id)initWithShadersInDirectory:(NSString *)directoryPath withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error
+- (id)initWithVertexShader:(NSString *)vert fragmentShader:(NSString *)frag forContext:(CGLContextObj)context error:(NSError **)error
 {
     self = [super init];
 	if(self)
@@ -226,15 +226,11 @@
 		NSError *loadError = nil;
 		
 		// Load vertex and fragment shader
-
-		NSString *vertexShaderSource = [self getVertexShaderSourceFromResource:theShadersName inDirectory:directoryPath error:&loadError];
         
-        NSString *fragmentShaderSource = [self getFragmentShaderSourceFromResource:theShadersName inDirectory:directoryPath error:&loadError];
-        
-        if (vertexShaderSource && fragmentShaderSource)
+        if ([frag length] && [vert length])
         {
-            [self setProgramObjectWithVertexSource:vertexShaderSource
-                                    fragmentSource:fragmentShaderSource
+            [self setProgramObjectWithVertexSource:vert
+                                    fragmentSource:frag
                                              error:&loadError];
         }
         
@@ -249,6 +245,14 @@
         }
 	}
 	return self;
+}
+
+- (id)initWithShadersInDirectory:(NSString *)directoryPath withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error
+{
+    NSString *vertexShaderSource = [[self class] getVertexShaderSourceFromResource:theShadersName inDirectory:directoryPath error:error];
+    NSString *fragmentShaderSource = [[self class] getFragmentShaderSourceFromResource:theShadersName inDirectory:directoryPath error:error];
+
+    return [self initWithVertexShader:vertexShaderSource fragmentShader:fragmentShaderSource forContext:context error:error];
 }
 
 - (id)initWithShadersInBundle:(NSBundle *)bundle withName:(NSString *)theShadersName forContext:(CGLContextObj)context error:(NSError **)error
