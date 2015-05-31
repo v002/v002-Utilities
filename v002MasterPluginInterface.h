@@ -29,6 +29,9 @@
 
 @interface v002_PLUGIN_CLASS_NAME_REPLACE_ME (Execution)
 
+- (BOOL) startExecution:(id<QCPlugInContext>)context NS_REQUIRES_SUPER;
+- (void) stopExecution:(id<QCPlugInContext>)context NS_REQUIRES_SUPER;
+
 //- (void) initializeRenderToFBO:(NSRect)bounds;
 //- (GLuint) finalizeRenderToFBO;
 @end

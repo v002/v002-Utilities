@@ -70,15 +70,15 @@
 }
 
 
-- (void) enableExecution:(id<QCPlugInContext>)context
-{
-//	CGLContextObj cgl_ctx = [context CGLContextObj];
-//	CGLLockContext(cgl_ctx);
-//	
-//	// cache our previously bound fbo before every execution
-//	//[pluginFBO cachePreviousFBO];
-//	CGLUnlockContext(cgl_ctx);
-}
+//- (void) enableExecution:(id<QCPlugInContext>)context
+//{
+////	CGLContextObj cgl_ctx = [context CGLContextObj];
+////	CGLLockContext(cgl_ctx);
+////	
+////	// cache our previously bound fbo before every execution
+////	//[pluginFBO cachePreviousFBO];
+////	CGLUnlockContext(cgl_ctx);
+//}
 
 - (void) disableExecution:(id<QCPlugInContext>)context
 {
