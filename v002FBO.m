@@ -39,16 +39,16 @@
         glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
         
 		// Create FBO 
-		glGenFramebuffersEXT(1, &fboID);
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboID);
-		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, textureID, 0);
+		glGenFramebuffers(1, &fboID);
+		glBindFramebuffer(GL_FRAMEBUFFER, fboID);
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ARB, textureID, 0);
 		
-		GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		glDeleteTextures(1, &textureID);
 		// restore state
 		[self popFBO:cgl_ctx];
 		[self popAttributes:cgl_ctx];
-		if(status != GL_FRAMEBUFFER_COMPLETE_EXT)
+		if(status != GL_FRAMEBUFFER_COMPLETE)
 		{	
 	//		NSLog(@"Cannot create FBO");
 			[self release];
@@ -63,7 +63,7 @@
 {
 	CGLContextObj cgl_ctx = context;
 	CGLLockContext(cgl_ctx);
-	if (fboID) glDeleteFramebuffersEXT(1, &fboID);
+	if (fboID) glDeleteFramebuffers(1, &fboID);
 	CGLUnlockContext(cgl_ctx);	
 	
 	CGLReleaseContext(context);
@@ -83,9 +83,9 @@
 
 - (void) pushFBO:(CGLContextObj)cgl_ctx
 {	
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &previousFBO);
-	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING_EXT, &previousReadFBO);
-	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING_EXT, &previousDrawFBO);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFBO);
+	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &previousReadFBO);
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousDrawFBO);
 	
 //	NSLog(@"Pushing FBO: previous FBO: %i", previousFBO);
 //	NSLog(@"Pushing FBO: previous FBO Draw: %i", previousDrawFBO);
@@ -94,9 +94,9 @@
 
 - (void) popFBO:(CGLContextObj)cgl_ctx
 {
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, previousFBO);	
-	glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, previousReadFBO);
-	glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, previousDrawFBO);
+	glBindFramebufferEXT(GL_FRAMEBUFFER, previousFBO);
+	glBindFramebufferEXT(GL_READ_FRAMEBUFFER, previousReadFBO);
+	glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, previousDrawFBO);
 }
 
 - (void)pushAttributes:(CGLContextObj)cgl_ctx
@@ -112,28 +112,42 @@
 }
 
 - (void) attachFBO:(CGLContextObj)cgl_ctx withTexture:(GLuint)tex width:(GLsizei)width height:(GLsizei)height
-{	
+{
+    [self bindFBO:cgl_ctx];
+    [self attachFBO:cgl_ctx withTexture:tex toAttachment:GL_COLOR_ATTACHMENT0 width:width height:height];
+    [self setupFBOViewport:cgl_ctx width:width height:height];
+}
+
+- (void) bindFBO:(CGLContextObj)cgl_ctx
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, fboID);
+}
+
+- (void) setupFBOViewport:(CGLContextObj)cgl_ctx width:(GLsizei)width height:(GLsizei)height
+{
+    glViewport(0, 0,  width, height);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    
+    glOrtho(0.0, width,  0.0,  height, -1, 1);
+    
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    
+    // client now renders to our quad...
+}
+
+- (void) attachFBO:(CGLContextObj)cgl_ctx withTexture:(GLuint)tex toAttachment:(GLuint)attachment width:(GLsizei)width height:(GLsizei)height
+{
 	// bind our FBO
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboID);
-	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, tex, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_RECTANGLE_ARB, tex, 0);
 
 	// Assume FBOs JUST WORK, because we checked on startExecution	
 
 	// Setup OpenGL states 
 	// this may be an issue... ?
-	
-	glViewport(0, 0,  width, height);
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	
-	glOrtho(0.0, width,  0.0,  height, -1, 1);		
-	
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-			
-	// client now renders to our quad...
 }
 
 - (void ) detachFBO:(CGLContextObj) cgl_ctx
