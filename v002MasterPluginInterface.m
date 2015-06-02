@@ -10,6 +10,8 @@
 #import <OpenGL/CGLMacro.h>
 
 @implementation v002_PLUGIN_CLASS_NAME_REPLACE_ME
+
+@synthesize shaderUniformBlock;
 @synthesize pluginShaderName;
 
 - (void) finalize
@@ -118,6 +120,8 @@
 
 - (GLuint) singleImageRenderWithContext:(CGLContextObj)cgl_ctx image:(id<QCPlugInInputImageSource>)image useFloat:(BOOL)useFloat
 {
+   
+    
     GLsizei width = [image imageBounds].size.width;
     GLsizei height = [image imageBounds].size.height;
     
@@ -154,6 +158,19 @@
     glDisable(GL_BLEND);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     
+    // bind our shader program
+    glUseProgramObjectARB([pluginShader programObject]);
+    
+    // setup our shaders!
+    if(self.shaderUniformBlock)
+    {
+        self.shaderUniformBlock(cgl_ctx);
+    }
+    else
+    {
+        // some error or some shit
+    }
+    
     // move to VA for rendering
     GLfloat tex_coords[] =
     {
@@ -181,7 +198,10 @@
     {
         glClampColorARB(GL_CLAMP_FRAGMENT_COLOR_ARB, GL_TRUE);
     }
-    
+
+    // disable shader program
+    glUseProgramObjectARB(NULL);
+
     [pluginFBO detachFBO:cgl_ctx];
     [pluginFBO popFBO:cgl_ctx];
     [pluginFBO popAttributes:cgl_ctx];
