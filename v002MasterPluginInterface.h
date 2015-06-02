@@ -32,8 +32,17 @@
 - (BOOL) startExecution:(id<QCPlugInContext>)context NS_REQUIRES_SUPER;
 - (void) stopExecution:(id<QCPlugInContext>)context NS_REQUIRES_SUPER;
 
-//- (void) initializeRenderToFBO:(NSRect)bounds;
-//- (GLuint) finalizeRenderToFBO;
+#pragma mark - Helper Methods
+
+// Is a Input Image that is currently, locked, bound, and active Floating Point?
+- (BOOL) boundImageIsFloatingPoint:(id<QCPlugInInputImageSource>)image inContext:(CGLContextObj)cgl_ctx;
+
+// Machine Endian Correct pixel format
+- (NSString*) pixelFormatIfUsingFloat:(BOOL)useFloat;
+
+// Helper method that renders a quad to the standard FBO. Requires shader binding and uniform setup prior, and unbinding post.
+- (GLuint) singleImageRenderWithContext:(CGLContextObj)cgl_ctx image:(id<QCPlugInInputImageSource>)image useFloat:(BOOL)useFloat;
+
 @end
 
 
