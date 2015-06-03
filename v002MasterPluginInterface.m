@@ -23,7 +23,8 @@
 - (void)dealloc
 {
 	self.pluginShaderName = nil;
-	// Just in case stopExecution wasn't called:
+
+    // Just in case stopExecution wasn't called:
 	[pluginShader release];
 	[pluginFBO release];
 	[super dealloc];
@@ -38,16 +39,13 @@
 	return pluginShader;
 }
 
-
 @end
 
 @implementation v002_PLUGIN_CLASS_NAME_REPLACE_ME (Execution)
 
 - (BOOL) startExecution:(id<QCPlugInContext>)context
 {
-	// work around lack of GLMacro.h for now
 	CGLContextObj cgl_ctx = [context CGLContextObj];
-//	CGLSetCurrentContext(cgl_ctx);
 
 	// shader loading
 	if([pluginShaderName length]) // do we have a name? if not dont bother.
@@ -69,21 +67,6 @@
 	}
 	
 	return YES;
-}
-
-
-//- (void) enableExecution:(id<QCPlugInContext>)context
-//{
-////	CGLContextObj cgl_ctx = [context CGLContextObj];
-////	CGLLockContext(cgl_ctx);
-////	
-////	// cache our previously bound fbo before every execution
-////	//[pluginFBO cachePreviousFBO];
-////	CGLUnlockContext(cgl_ctx);
-//}
-
-- (void) disableExecution:(id<QCPlugInContext>)context
-{
 }
 
 - (void) stopExecution:(id<QCPlugInContext>)context
@@ -119,9 +102,7 @@
 }
 
 - (GLuint) singleImageRenderWithContext:(CGLContextObj)cgl_ctx image:(id<QCPlugInInputImageSource>)image useFloat:(BOOL)useFloat
-{
-   
-    
+{    
     GLsizei width = [image imageBounds].size.width;
     GLsizei height = [image imageBounds].size.height;
     
@@ -145,6 +126,8 @@
     [pluginFBO pushFBO:cgl_ctx];
     [pluginFBO attachFBO:cgl_ctx withTexture:tex width:width height:height];
     
+    
+    
     glColor4f(1.0, 1.0, 1.0, 1.0);
     
     glEnable([image textureTarget]);
@@ -155,8 +138,14 @@
     
     // do not need blending if we use black border for alpha and replace env mode, saves a buffer wipe
     // we can do this since our image draws over the complete surface of the FBO, no pixel goes untouched.
-    glDisable(GL_BLEND);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glDisable(GL_BLEND);
+
+    // old alpha compositing code for reference
+//    glClearColor(0.0, 0.0, 0.0, 0.0);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glEnable(GL_BLEND);
+//    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     
     // bind our shader program
     glUseProgramObjectARB([pluginShader programObject]);
