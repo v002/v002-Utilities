@@ -11,7 +11,7 @@
 #import "v002Shader.h"
 #import "v002FBO.h"
 
-#define kv002DescriptionAddOnText @"\n\rv002 Plugins : http://v002.info\n\nCopyright:\nvade - Anton Marini.\nbangnoise - Tom Butterworth\n\n2008-2012 - Creative Commons Non Commercial Share Alike Attribution 3.0" 
+#define kv002DescriptionAddOnText @"\n\rv002 Plugins : http://v002.info\n\nCopyright:\nvade - Anton Marini.\nbangnoise - Tom Butterworth\n\n2008-2099 - Creative Commons Non Commercial Share Alike Attribution 3.0" 
 
 typedef void(^ShaderUniformBlock)(CGLContextObj cgl_ctx);
 
