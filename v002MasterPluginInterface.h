@@ -13,7 +13,10 @@
 
 #define kv002DescriptionAddOnText @"\n\rv002 Plugins : http://v002.info\n\nCopyright:\nvade - Anton Marini.\nbangnoise - Tom Butterworth\n\n2008-2099 - Creative Commons Non Commercial Share Alike Attribution 3.0" 
 
-typedef void(^ShaderUniformBlock)(CGLContextObj cgl_ctx);
+// we pass in an instance so we dont have to strongly reference self in our block via weak/strong dance:
+// __unsafe_unretained typeof(v002_PLUGIN_CLASS_NAME_REPLACE_ME)
+
+typedef void(^ShaderUniformBlock)(CGLContextObj cgl_ctx, __unsafe_unretained id instance);
 
 @interface v002_PLUGIN_CLASS_NAME_REPLACE_ME : QCPlugIn
 {	

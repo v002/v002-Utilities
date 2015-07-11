@@ -153,7 +153,7 @@
     // setup our shaders!
     if(self.shaderUniformBlock)
     {
-        self.shaderUniformBlock(cgl_ctx);
+        self.shaderUniformBlock(cgl_ctx, self);
     }
     else
     {
