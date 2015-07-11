@@ -11,14 +11,21 @@
 #import "v002Shader.h"
 #import "v002FBO.h"
 
-#define kv002DescriptionAddOnText @"\n\rv002 Plugins : http://v002.info\n\nCopyright:\nvade - Anton Marini.\nbangnoise - Tom Butterworth\n\n2008-2012 - Creative Commons Non Commercial Share Alike Attribution 3.0" 
+#define kv002DescriptionAddOnText @"\n\rv002 Plugins : http://v002.info\n\nCopyright:\nvade - Anton Marini.\nbangnoise - Tom Butterworth\n\n2008-2099 - Creative Commons Non Commercial Share Alike Attribution 3.0" 
+
+// we pass in an instance so we dont have to strongly reference self in our block via weak/strong dance:
+// __unsafe_unretained typeof(v002_PLUGIN_CLASS_NAME_REPLACE_ME)
+
+typedef void(^ShaderUniformBlock)(CGLContextObj cgl_ctx, __unsafe_unretained id instance);
 
 @interface v002_PLUGIN_CLASS_NAME_REPLACE_ME : QCPlugIn
 {	
-		v002Shader* pluginShader;
-		NSString* pluginShaderName;
-		v002FBO* pluginFBO;
+    v002Shader* pluginShader;
+    NSString* pluginShaderName;
+    v002FBO* pluginFBO;
+    ShaderUniformBlock shaderUniformBlock;
 }
+@property (nonatomic, copy) ShaderUniformBlock shaderUniformBlock;
 
 @property (readwrite, retain) NSString* pluginShaderName;
 
@@ -29,8 +36,21 @@
 
 @interface v002_PLUGIN_CLASS_NAME_REPLACE_ME (Execution)
 
-//- (void) initializeRenderToFBO:(NSRect)bounds;
-//- (GLuint) finalizeRenderToFBO;
+- (BOOL) startExecution:(id<QCPlugInContext>)context NS_REQUIRES_SUPER;
+- (void) stopExecution:(id<QCPlugInContext>)context NS_REQUIRES_SUPER;
+
+#pragma mark - Helper Methods
+
+// Is a Input Image that is currently, locked, bound, and active Floating Point?
+- (BOOL) boundImageIsFloatingPoint:(id<QCPlugInInputImageSource>)image inContext:(CGLContextObj)cgl_ctx;
+
+// Machine Endian Correct pixel format
+- (NSString*) pixelFormatIfUsingFloat:(BOOL)useFloat;
+
+// Helper method that renders a quad to the standard FBO.
+// Requires our shaderUniformBlock to be set
+- (GLuint) singleImageRenderWithContext:(CGLContextObj)cgl_ctx image:(id<QCPlugInInputImageSource>)image useFloat:(BOOL)useFloat;
+
 @end
 
 
