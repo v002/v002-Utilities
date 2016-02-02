@@ -16,7 +16,7 @@
 // we pass in an instance so we dont have to strongly reference self in our block via weak/strong dance:
 // __unsafe_unretained typeof(v002_PLUGIN_CLASS_NAME_REPLACE_ME)
 
-typedef void(^ShaderUniformBlock)(CGLContextObj cgl_ctx, __unsafe_unretained id instance);
+typedef void(^ShaderUniformBlock)(CGLContextObj cgl_ctx, __unsafe_unretained id instance, __unsafe_unretained id<QCPlugInInputImageSource> image);
 
 @interface v002_PLUGIN_CLASS_NAME_REPLACE_ME : QCPlugIn
 {	
