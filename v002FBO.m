@@ -16,7 +16,8 @@
 
 - (id) initWithContext:(CGLContextObj)cgl_ctx
 {
-	if ((self = [super init]))
+    self = [super init];
+	if (self)
 	{
 	
 		context = cgl_ctx;
@@ -49,10 +50,11 @@
 		[self popFBO:cgl_ctx];
 		[self popAttributes:cgl_ctx];
 		if(status != GL_FRAMEBUFFER_COMPLETE)
-		{	
-	//		NSLog(@"Cannot create FBO");
-			[self release];
-			return nil;
+        {
+#if !__has_feature(objc_arc)
+            [self release];
+#endif
+           self = nil;
 		}
 	}
 	
@@ -72,13 +74,9 @@
 - (void) dealloc
 {
 	[self cleanupGL];
+#if !__has_feature(objc_arc)
 	[super dealloc];
-}
-
-- (void)finalize
-{
-	[self cleanupGL];
-	[super finalize];
+#endif
 }
 
 - (void) pushFBO:(CGLContextObj)cgl_ctx

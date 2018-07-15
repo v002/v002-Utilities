@@ -219,7 +219,7 @@
 - (id)initWithVertexShader:(NSString *)vert fragmentShader:(NSString *)frag forContext:(CGLContextObj)context error:(NSError **)error
 {
     self = [super init];
-	if(self)
+	if (self)
 	{
 		cgl_ctx = CGLRetainContext(context);
 
@@ -240,8 +240,10 @@
             {
                 *error = loadError;
             }
+#if !__has_feature(objc_arc)
             [self release];
-            return nil;
+#endif
+            self = nil;
         }
 	}
 	return self;
@@ -281,18 +283,6 @@
 
 //---------------------------------------------------------------------------------
 
-- (void) finalize
-{
-	// Delete OpenGL resources	
-	if( programObject )
-	{
-		glDeleteObjectARB(programObject);
-		programObject = NULL;
-	} // if
-	CGLReleaseContext(cgl_ctx);
-	[super finalize];
-}
-
 - (void) dealloc
 {
 	// Delete OpenGL resources	
@@ -304,8 +294,9 @@
 	} // if
     
     CGLReleaseContext(cgl_ctx);
-	//Dealloc the superclass
+#if !__has_feature(objc_arc)
 	[super dealloc];
+#endif
 } // dealloc
 
 //---------------------------------------------------------------------------------
