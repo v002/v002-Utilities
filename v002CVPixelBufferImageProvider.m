@@ -41,14 +41,6 @@
 	return self;
 }
 
-- (void)finalize
-{
-    CVOpenGLTextureCacheRelease(_cache);
-    CVPixelBufferUnlockBaseAddress(_buffer, kCVPixelBufferLock_ReadOnly);
-	CVPixelBufferRelease(_buffer);
-	[super finalize];
-}
-
 - (void)dealloc
 {
     CVOpenGLTextureCacheRelease(_cache);
